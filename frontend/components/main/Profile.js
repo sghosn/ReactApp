@@ -18,6 +18,7 @@ function Profile(props) {
     const [following, setFollowing] = useState(false);
     const [refresh, setRefresh] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState(null);
 
     const fetchData = () => {
       const { currentUser, posts } = props;
@@ -63,6 +64,7 @@ function Profile(props) {
           }
     }
     const fetchRefreshData = () => {
+      console.log("test");
       const { currentUser, posts } = props;
           setLoading(true)
           console.log("Test")
@@ -134,8 +136,7 @@ function Profile(props) {
             ref={onGetRef}
             scrollEventThrottle={16}
             onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {
-              useNativeDriver: true,
-            })}
+            useNativeDriver: true })}
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
@@ -251,11 +252,17 @@ function Profile(props) {
           });
           return (
             <Animated.View style={[styles.header, {transform: [{translateY: y}]}]}>
-                <Text>{user.email}</Text>
+              <View>
+              <Image
+                                style={styles.profileImage}
+                                source={{ uri: user.profilePic }}
+                            />
+              </View>
+              <View style={styles.container}>
                 <Text>{user.email}</Text>
 
                 {props.route.params.uid !== firebase.auth().currentUser.uid ? (
-                    <View> 
+                    <View style={styles.buttonContainer}> 
                         {following ? (
                             <Button
                                 title="Following"
@@ -270,17 +277,17 @@ function Profile(props) {
                         )}
                     </View>
                 ) : 
-                  <View>
+                  <View style={styles.buttonContainer}>
                     <Button
                         title="Logout"
                         onPress={()=> onLogout()}
                     />
                     <Button
                         title="Change Profile Pic"
-                        onPress={()=> onLogout()}
+                        onPress={() => props.navigation.navigate('Test' , { screen: 'Settings' })}
                     />
                   </View>}
-
+              </View>
             </Animated.View>
           );
 
@@ -493,11 +500,18 @@ function Profile(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
+      profileImage: {
+        height:150,
+        width:150,
+        justifyContent: 'center',
+        alignItems: 'center',
+        resizeMode: 'contain',
         flex: 1,
+        marginBottom: 50
+        
     },
-    containerInfo: {
-        margin: 20
+    container: {
+      marginTop: -90
     },
     containerGallery: {
         flex: 1
@@ -508,6 +522,9 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         aspectRatio: 1/1
+    },
+    buttonContainer: {
+      marginBottom: 40
     },
     header: {
         top: 0,

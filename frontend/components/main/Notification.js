@@ -9,12 +9,58 @@ import { bindActionCreators } from 'redux'
 import { fetchUsersData } from '../../redux/actions'
 
 function Notification(props) {
+    const [userNotifications, setUserNotifications] = useState([]);
+    const [user, setUser] = useState(null);
+
+    const { currentUser, notifications } = props;
+    useEffect(() => { 
+        if(props.route.params.uid === firebase.auth().currentUser.uid){
+            console.log("Test1")
+            setUser(currentUser)
+            setUserNotifications(notifications)
+        } else {
+            console.log("Test2")
+            firebase.firestore()
+            .collection("users")
+            .doc(props.route.params.uid)
+            .get()
+            .then((snapshot) => {
+                if(snapshot.exists){
+                    setUser(snapshot.data())
+                }
+                else {
+                    console.log('does not exist')
+                }
+            })
+            firebase.firestore()
+            .collection("posts")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("notifications")
+            .get()
+            .onSnapshot((snapshot) => {
+            let notifications = snapshot.docs.map(doc => {
+                const data = doc.data();
+                const id = doc.id;
+                    return { id, ...data }
+                })
+                setUserNotifications(notifications)
+            })
+        }
+    })
+    
     return (
         <View>
-
+        <FlatList
+            data={userNotifications}
+            renderItem={({ item }) => (
+                    <View>
+                        <Text>{item.activity}</Text>
+                    </View>
+                )}
+        />
         </View>
     )
-    
+}  
 /*    const [comments, setComments] = useState([])
     const [postId, setPostId] = useState("")
     const [text, setText] = useState("")
@@ -103,5 +149,9 @@ const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUsersData }, di
 
 export default connect(mapStateToProps, mapDispatchProps)(Notification);
 */
-}
-export default Notification;
+const mapStateToProps = (store) => ({
+    currentUser: store.userState.currentUser,
+    notifications: store.userState.notifications,
+})
+
+export default connect(mapStateToProps, null)(Notification);

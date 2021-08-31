@@ -1,4 +1,4 @@
-import { USER_STATE_CHANGE, USERS_DATA_STATE_CHANGE, USERS_POSTS_STATE_CHANGE, CLEAR_DATA  } from '../constants/index'
+import { USER_STATE_CHANGE, USERS_DATA_STATE_CHANGE, USERS_POSTS_STATE_CHANGE, CLEAR_DATA, USER_NOTIFICATION_STATE_CHANGE  } from '../constants/index'
 import { USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE, USERS_LIKES_STATE_CHANGE } from '../constants/index'
 import firebase from 'firebase'
 
@@ -18,6 +18,7 @@ export function fetchUser(){
             .then((snapshot) => {
                 if(snapshot.exists){
                     dispatch({type : USER_STATE_CHANGE, currentUser: snapshot.data()})
+                    console.log("exists!")
                 }
                 else {
                     console.log('does not exist')
@@ -141,6 +142,24 @@ export function fetchUsersFollowingLikes(uid, postId){
                 }
 
                 dispatch({type : USERS_LIKES_STATE_CHANGE, postId, currentUserLike })
+            })
+    })
+
+}
+
+export function fetchUserNotifications(){
+    return((dispatch) => {
+        firebase.firestore()
+            .collection("posts")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("notifications")
+            .onSnapshot((snapshot) => {
+                let notifications = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    return { id, ...data }
+                })
+                dispatch({type : USER_NOTIFICATION_STATE_CHANGE, notifications })
             })
     })
 

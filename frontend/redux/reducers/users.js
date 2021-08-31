@@ -5,6 +5,7 @@ import { USERS_POSTS_STATE_CHANGE, CLEAR_DATA, USERS_LIKES_STATE_CHANGE } from "
 const initialState = {
     users: [],
     feed: [],
+    notifications: [],
     usersFollowingLoaded: 0,
 }
 

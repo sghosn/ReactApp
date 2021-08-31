@@ -18,6 +18,20 @@ exports.addLike = functions.firestore.document('/posts/{creatorId}/userPosts/{po
             })
     })
 
+exports.addNotification = functions.firestore.document('/posts/{creatorId}/userPosts/{postId}/likes/{userId}')
+    .onCreate((snap, context) => {
+        return db
+            .collection('posts')
+            .doc(context.params.creatorId)
+            .collection('notifications')
+            .doc(Math.random().toString(36))
+            .set({
+                    activity: 'Liked',
+                    postIdIs: context.params.postId,
+                    userIdIs: context.params.userId
+        })
+    })
+
 exports.removeLike = functions.firestore.document('/posts/{creatorId}/userPosts/{postId}/likes/{userId}')
     .onDelete((snap, context) => {
         return db

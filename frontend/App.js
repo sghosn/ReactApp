@@ -37,13 +37,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RegisterScreen from './components/auth/Register'
 import LoginScreen from './components/auth/Login'
 import MainScreen from './components/main'
+import MainTestScreen from './components/maintest'
 import { createDrawerNavigator, DrawerActions } from '@react-navigation/drawer';
 
 import FeedScreen from './components/main/Feed'
 import ProfileScreen from './components/main/Profile'
 import AddScreen from './components/main/Add'
+import SettingScreen from './components/main/Settings'
 import NotificationScreen from './components/main/Notification'
 import SaveScreen from './components/main/Save'
+import SaveProfileScreen from './components/main/SaveProfile'
 import CommentScreen from './components/main/Comment'
 
 
@@ -55,9 +58,9 @@ const MainStackNavigator = (navigation) => {
       <Stack.Navigator initialRouteName="Main" screenOptions={props => {
         const { toggleDrawer } = props.navigation
         return {
-          headerLeft: ({ color, size }) => (
+          headerRight: ({ color, size }) => (
             <MaterialCommunityIcons name="cog-outline" color={color} size={26} size={30}
-            style={{ flexDirection:"row", paddingLeft: 15 }}
+            style={{ flexDirection:"row", paddingRight: 15 }}
             onPress={() => { toggleDrawer()}}/>
           )
         }
@@ -69,10 +72,36 @@ const MainStackNavigator = (navigation) => {
         <Stack.Screen name="Save" component={SaveScreen} navigation={navigation}  />
         <Stack.Screen name="Comment" component={CommentScreen} navigation={navigation}  />
         <Stack.Screen name="Profile" component={ProfileScreen} navigation={navigation}  />
+        <Stack.Screen name="SaveProfile" component={SaveProfileScreen} navigation={navigation}  />
       </Stack.Navigator>
   )
 }
 
+const TestNavigator = (navigation) => {
+  return (
+      <Stack.Navigator initialRouteName="Notification" screenOptions={props => {
+        const { toggleDrawer } = props.navigation
+        return {
+          headerRight: ({ color, size }) => (
+            <MaterialCommunityIcons name="cog-outline" color={color} size={26} size={30}
+            style={{ flexDirection:"row", paddingRight: 15 }}
+            onPress={() => { toggleDrawer()}}/>
+          )
+        }
+      }
+      
+      }>
+      <Stack.Screen name="Notification" component={MainTestScreen} navigation={navigation} />
+        <Stack.Screen name="Main2" component={MainTestScreen} navigation={navigation} />
+        <Stack.Screen name="Add" component={AddScreen} navigation={navigation} />
+        <Stack.Screen name="SaveProfile" component={SaveProfileScreen} navigation={navigation}  />
+        <Stack.Screen name="Settings" component={SettingScreen} navigation={navigation}  />
+        <Stack.Screen name="Comment" component={CommentScreen} navigation={navigation}  />
+        <Stack.Screen name="Profile" component={ProfileScreen} navigation={navigation}  />
+
+      </Stack.Navigator>
+  )
+}
 export class App extends Component {
   constructor(props){
     super(props);
@@ -120,11 +149,13 @@ export class App extends Component {
         </NavigationContainer>
       );
    }
+
    return (
      <Provider store={store}>
        <NavigationContainer>
       <Drawer.Navigator initialRouteName="Main">
         <Drawer.Screen name="Main" component={MainStackNavigator} />
+        <Drawer.Screen name="Test" component={TestNavigator} />
       </Drawer.Navigator>
     </NavigationContainer>
      </Provider>
